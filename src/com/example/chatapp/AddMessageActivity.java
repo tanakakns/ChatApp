@@ -19,4 +19,5 @@ public class AddMessageActivity extends Activity {
 		return true;
 	}
 
+	
 }
