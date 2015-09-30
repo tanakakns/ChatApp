@@ -3,26 +3,27 @@ package com.example.chatapp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import android.util.Log;
-
 public class MessageHttpClient {
 	
-	private String urlStr = "";
-	private URL url = null;
+	private String postUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatServer/message?m=";
+	private String getUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatServer/messages/latest/10";
+	private URL postUrl = null;
+	private URL getUrl = null;
 	
 	public MessageHttpClient() {
 		try {
-			this.url = new URL(urlStr);
+			this.getUrl = new URL(getUrlStr);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -31,13 +32,14 @@ public class MessageHttpClient {
 	public boolean post(String body) {
 		HttpURLConnection conn;
 		try {
-			conn = (HttpURLConnection) url.openConnection();
+			this.postUrl = new URL(postUrlStr+body);
+			conn = (HttpURLConnection) postUrl.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			conn.connect();
-			PrintWriter w = new PrintWriter(conn.getOutputStream());
-			w.print("m="+body);
-			w.close();
+//			PrintWriter w = new PrintWriter(conn.getOutputStream());
+//			w.print("m="+body);
+//			w.close();
 			conn.getResponseCode();
 			
 			return true;
@@ -50,7 +52,7 @@ public class MessageHttpClient {
 	public List<String> get() {
 		HttpURLConnection conn;
 		try {
-			conn = (HttpURLConnection) url.openConnection();
+			conn = (HttpURLConnection) getUrl.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("GET");
 			conn.connect();

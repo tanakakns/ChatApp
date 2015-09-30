@@ -56,7 +56,7 @@ public class AddMessageActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			if(httpClient.post(message)){
-				tv.setText("");
+				//tv.setText("");
 			}
 			return null;
 		}

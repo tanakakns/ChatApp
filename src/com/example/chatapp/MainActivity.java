@@ -58,17 +58,21 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		GetMessageSyncTask async = new GetMessageSyncTask();
 		async.execute();
+		messageList = async.results;
 
 		adapter.notifyDataSetChanged();
 	}
 
-	protected class GetMessageSyncTask extends AsyncTask<Void, Void, List<String>> {
+	protected class GetMessageSyncTask extends AsyncTask<Void, Void, Void> {
+		
+		List<String> results = null;
 		
 		@Override
-		protected List<String> doInBackground(Void... arg0) {
+		protected Void doInBackground(Void... arg0) {
 			MessageHttpClient httpClient = new MessageHttpClient();
 			
-			return httpClient.get();
+			results = httpClient.get();
+			return null;
 		}
 	}
 
