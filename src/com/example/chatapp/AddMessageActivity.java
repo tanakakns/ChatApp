@@ -1,5 +1,6 @@
 package com.example.chatapp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -12,6 +13,9 @@ public class AddMessageActivity extends Activity {
 	TextView tv;
 	Button sendButton;
 	Button cancelButton;
+	
+	String message;
+	MessageHttpClient httpClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +25,14 @@ public class AddMessageActivity extends Activity {
 		tv = (TextView) findViewById(R.id.inputMessage);
 		sendButton = (Button) findViewById(R.id.inputButton);
 		cancelButton = (Button) findViewById(R.id.cancelButton);
+		
+		httpClient = new MessageHttpClient();
 
 		sendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String message = tv.getText().toString();
-				sendNewMessage(message);
+				message = tv.getText().toString();
+				sendNewMessage();
 				finish();
 			}
 		});
@@ -34,14 +40,26 @@ public class AddMessageActivity extends Activity {
 		cancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				tv.setText("");
 				finish();
 			}
 		});
 	}
 
-	public void sendNewMessage(String message) {
+	public void sendNewMessage() {
 		//Send to Server
+		MessageSyncTask mst = new MessageSyncTask();
+		mst.execute();
+	}
+	
+	protected class MessageSyncTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			if(httpClient.post(message)){
+				tv.setText("");
+			}
+			return null;
+		}
 	}
 
 	@Override
