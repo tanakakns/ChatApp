@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -58,20 +59,17 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		GetMessageSyncTask async = new GetMessageSyncTask();
 		async.execute();
-		messageList = async.results;
-
+		Log.d("messageList", (String)messageList.get(0));
 		adapter.notifyDataSetChanged();
 	}
 
 	protected class GetMessageSyncTask extends AsyncTask<Void, Void, Void> {
 		
-		List<String> results = null;
-		
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			MessageHttpClient httpClient = new MessageHttpClient();
 			
-			results = httpClient.get();
+			messageList = httpClient.get();
 			return null;
 		}
 	}

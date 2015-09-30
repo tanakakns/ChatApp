@@ -16,8 +16,8 @@ import com.google.gson.reflect.TypeToken;
 
 public class MessageHttpClient {
 	
-	private String postUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatServer/message?m=";
-	private String getUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatServer/messages/latest/10";
+	private String postUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatService/message?m=";
+	private String getUrlStr = "http://chatserver-sample.elasticbeanstalk.com/ChatService/messages/latest/10";
 	private URL postUrl = null;
 	private URL getUrl = null;
 	
@@ -32,15 +32,18 @@ public class MessageHttpClient {
 	public boolean post(String body) {
 		HttpURLConnection conn;
 		try {
+			Log.d("post", body);
 			this.postUrl = new URL(postUrlStr+body);
 			conn = (HttpURLConnection) postUrl.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "text/plain");
 			conn.connect();
 //			PrintWriter w = new PrintWriter(conn.getOutputStream());
 //			w.print("m="+body);
 //			w.close();
-			conn.getResponseCode();
+			int res =conn.getResponseCode();
+			Log.d("statusCd_post", String.valueOf(res));
 			
 			return true;
 		} catch (IOException e) {
@@ -53,13 +56,17 @@ public class MessageHttpClient {
 		HttpURLConnection conn;
 		try {
 			conn = (HttpURLConnection) getUrl.openConnection();
-			conn.setDoOutput(true);
+			conn.setDoInput(true);
 			conn.setRequestMethod("GET");
 			conn.connect();
-			conn.getResponseCode();
+			int res =conn.getResponseCode();
+			Log.d("statusCd_get", String.valueOf(res));
 			BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String body = r.readLine();
 			Gson gson = new Gson();
-			return gson.fromJson(r, new TypeToken<List<String>>(){}.getType());
+			//return gson.fromJson(r, new TypeToken<List<String>>(){}.getType());
+			Log.d("response body", body);
+			return gson.fromJson(body, List.class);
 			
 		} catch (IOException e) {
 			Log.d("app", "During get:" + e);
